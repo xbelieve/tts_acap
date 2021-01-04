@@ -9,6 +9,13 @@
 #include <iterator>
 #include <sstream>
 #include <map>
+#include <syslog.h>
+
+#define LOG(fmt, args...)    { syslog(LOG_INFO, fmt, ## args); printf(fmt, ## args); }
+#define LOG_ERROR(fmt, args...)    { syslog(LOG_CRIT, fmt, ## args); printf(fmt, ## args); }
+
+#define PACKAGE_NAME      "gtts"
+#define PACKAGE_NICENAME  "gtts"
 
 namespace gtts {
     typedef std::string string;

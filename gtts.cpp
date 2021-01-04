@@ -41,17 +41,17 @@ void GoogleTTS::unite() {
 void GoogleTTS::execute() {
     if (_cmds.size() == 1) {
         std::system(_cmds[0].c_str());
-        printf("%s\n", _cmds[0].c_str());
+        LOG("%s\n", _cmds[0].c_str());
     } else {
         for(string cmd : _cmds) {
             std::system(cmd.c_str());
-            printf("%s\n", cmd.c_str());
+            LOG("%s\n", cmd.c_str());
         }
         this->unite();
     }
     _mpv += _play;
     std::system(_mpv.c_str());
-    printf("%s\n", _mpv.c_str());
+    LOG("%s\n", _mpv.c_str());
 }
 
 void GoogleTTS::replace(string& text) {

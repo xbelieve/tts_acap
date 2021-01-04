@@ -1,16 +1,13 @@
 #include "./gtts.h"
-#include <syslog.h>
+//#include <syslog.h>
 #include <glib.h>
 #include <glib-object.h>
 #include <glib/gprintf.h>
 #include <memory>
 #include <axsdk/axhttp.h>
 
-#define LOG(fmt, args...)    { syslog(LOG_INFO, fmt, ## args); printf(fmt, ## args); }
-#define LOG_ERROR(fmt, args...)    { syslog(LOG_CRIT, fmt, ## args); printf(fmt, ## args); }
-
-#define PACKAGE_NAME      "gtts"
-#define PACKAGE_NICENAME  "gtts"
+//#define LOG(fmt, args...)    { syslog(LOG_INFO, fmt, ## args); printf(fmt, ## args); }
+//#define LOG_ERROR(fmt, args...)    { syslog(LOG_CRIT, fmt, ## args); printf(fmt, ## args); }
 
 AXHttpHandler  *httpHandler = 0;
 typedef std::string string;
@@ -21,7 +18,7 @@ httpCallback( const gchar *path, const gchar *method, const gchar *query, GHashT
   GDataOutputStream *http = g_data_output_stream_new(stream);;
   guint value;
 
-  printf("method: %s, query= %s\n", method, query );
+  LOG("method: %s, query= %s\n", method, query );
 
 
   //Send HTTP header to JSON data response
@@ -57,7 +54,7 @@ main(void) {
   httpHandler = ax_http_handler_new( httpCallback, NULL);
   
   g_main_loop_run( loop );
-  
+  LOG("complete the application %s\n", PACKAGE_NAME);
   //No need to clean up as ACAP platform will do this when application exits
   return 0;
 }
