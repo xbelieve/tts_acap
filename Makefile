@@ -1,5 +1,5 @@
-PROG1	= gtts
-OBJS1	= $(PROG1).cpp main.cpp
+PROG1	= tts_go
+OBJS1	= gtts.cpp main.cpp
 PROGS	= $(PROG1)
 
 PKGS = gio-2.0 gio-unix-2.0 axhttp
