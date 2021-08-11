@@ -2,6 +2,59 @@
 
 namespace gtts {
 
+const char SAFE[256] =
+	{
+			/*      0 1 2 3  4 5 6 7  8 9 A B  C D E F */
+			/* 0 */ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
+			/* 1 */ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
+			/* 2 */ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
+			/* 3 */ 1,1,1,1, 1,1,1,1, 1,1,0,0, 0,0,0,0,
+			
+			/* 4 */ 0,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1,
+			/* 5 */ 1,1,1,1, 1,1,1,1, 1,1,1,0, 0,0,0,0,
+			/* 6 */ 0,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1,
+			/* 7 */ 1,1,1,1, 1,1,1,1, 1,1,1,0, 0,0,0,0,
+			
+			/* 8 */ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
+			/* 9 */ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
+			/* A */ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
+			/* B */ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
+			
+			/* C */ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
+			/* D */ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
+			/* E */ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
+			/* F */ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0
+	};
+
+	std::string URIEncode(const std::string & sSrc)
+	{
+		const char DEC2HEX[16 + 1] = "0123456789abcdef";
+		const unsigned char * pSrc = (const unsigned char *)sSrc.c_str();
+		const int SRC_LEN = sSrc.length();
+		unsigned char * const pStart = new unsigned char[SRC_LEN * 3];
+		unsigned char * pEnd = pStart;
+		const unsigned char * const SRC_END = pSrc + SRC_LEN;
+
+		for (; pSrc < SRC_END; ++pSrc)
+		{
+			if (SAFE[*pSrc]) {
+				*pEnd++ = *pSrc;
+			}	else if (*pSrc == ' ' || *pSrc == '-' || *pSrc == '_' || *pSrc == '.' || *pSrc == '!' || *pSrc == '~' || *pSrc == '*' || *pSrc == '\'' || *pSrc == '(' || *pSrc == ')' || *pSrc == ':' || *pSrc == '/'|| *pSrc == '\\') {
+				*pEnd++ = *pSrc;
+			} else {
+				// escape this char
+				*pEnd++ = '%';
+				*pEnd++ = DEC2HEX[*pSrc >> 4];
+				*pEnd++ = DEC2HEX[*pSrc & 0x0F];
+			}
+		}
+
+		std::string sResult((char *)pStart, (char *)pEnd);
+		delete [] pStart;
+		return sResult;
+	}
+
+
 GoogleTTS::GoogleTTS(string msg, string lang, string speed) {
     _speed += speed;
     _lang += lang;
@@ -55,17 +108,18 @@ void GoogleTTS::execute() {
 }
 
 void GoogleTTS::replace(string& text) {
-    size_t start_pos = 0;
+    text = URIEncode(text);
+    /*size_t start_pos = 0;
     while ((start_pos = text.find(" ", start_pos)) != string::npos) {
        text.replace(start_pos, 1, "%20");
        start_pos += 3; // Handles case where 'to' is a substring of 'from'
-    }
+    }*/
 }
 
 void GoogleTTS::parse() {
     this->replace(_text);
     string cmd = _curl + _text + _lang + _client + "-H" + _ref + "-H";
-    cmd += _agent + _out + " 2>/dev/null"; 
+    cmd += _agent + _out; 
     _cmds.push_back(cmd);
 }
 
