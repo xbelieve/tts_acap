@@ -1,0 +1,31 @@
+{
+    "schemaVersion": "1.0",
+    "acapPackageConf": {
+        "setup": {
+            "friendlyName": "TTS_Go",
+            "appName": "tts_go",
+            "appId": "413448",
+            "vendor": "Little Dragon TechLab",
+            "embeddedSdkVersion": "2.0",
+            "user": {
+                "group": "sdk",
+                "username": "sdk"
+            },
+            "runMode": "respawn",
+            "version": "1.0.1"
+        },
+        "copyProtection": {
+            "method": "none"
+        },
+        "configuration": {
+            "settingPage": "setup.html",
+            "httpConfig": [
+                {
+                    "access": "viewer",
+                    "name": "tts.cgi",
+                    "type": "transferCgi"
+                }
+            ]
+        }
+    }
+}

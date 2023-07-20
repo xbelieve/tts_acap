@@ -19,3 +19,7 @@ bin-release/
 gtts
 tts_go
 ._gtts.h
+*-var_log_messages.txt
+.target-makefrag
+*-var_log_messages.old
+.eap-install.cfg

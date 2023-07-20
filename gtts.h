@@ -2,131 +2,136 @@
 #ifndef GTTS_H
 #define GTTS_H
 
-#include <string>
-#include <vector>
-#include <iostream>
 #include <cstdlib>
+#include <iostream>
 #include <iterator>
-#include <sstream>
 #include <map>
+#include <sstream>
+#include <string>
 #include <syslog.h>
+#include <vector>
 
-#define LOG(fmt, args...)    { syslog(LOG_INFO, fmt, ## args); printf(fmt, ## args); }
-#define LOG_ERROR(fmt, args...)    { syslog(LOG_CRIT, fmt, ## args); printf(fmt, ## args); }
+#define LOG(fmt, args...)                                                      \
+  {                                                                            \
+    syslog(LOG_INFO, fmt, ##args);                                             \
+    printf(fmt, ##args);                                                       \
+  }
+#define LOG_ERROR(fmt, args...)                                                \
+  {                                                                            \
+    syslog(LOG_CRIT, fmt, ##args);                                             \
+    printf(fmt, ##args);                                                       \
+  }
 
-#define PACKAGE_NAME      "gtts"
-#define PACKAGE_NICENAME  "gtts"
+#define PACKAGE_NAME "gtts"
+#define PACKAGE_NICENAME "gtts"
 
 namespace gtts {
-    typedef std::string string;
+typedef std::string string;
 
-    const std::map<string, string> lang_codes{
-        {"af", "Afrikaans"},
-        {"sq", "Albanian"},
-        {"ar", "Arabic"},
-        {"hy", "Armenian"},
-        {"az", "Azerbaijani"},
-        {"eu", "Basque"},
-        {"be", "Belarusian"},
-        {"bn", "Bengali"},
-        {"bs", "Bosnian"},
-        {"km", "Cambodian"},
-        {"ca", "Catalan"},
-        {"zh-CN", "Chinese (Simplified)"},
-        {"zh-TW", "Chinese (Traditional)"},
-        {"hr", "Croatian"},
-        {"cs", "Czech"},
-        {"da", "Danish"},
-        {"nl", "Dutch"},
-        {"en", "English"},
-        {"eo", "Esperanto"},
-        {"et", "Estonian"},
-        {"tl", "Filipino"},
-        {"fi", "Finnish"},
-        {"fr", "French"},
-        {"ka", "Georgian"},
-        {"de", "German"},
-        {"el", "Greek"},
-        {"gu", "Gujarati"},
-        {"hi", "Hindi"},
-        {"hu", "Hungarian"},
-        {"is", "Icelandic"},
-        {"id", "Indonesian"},
-        {"it", "Italian"},
-        {"ja", "Japanese"},
-        {"jw", "Javanese"},
-        {"kn", "Kannada"},
-        {"ko", "Korean"},
-        {"la", "Latin"},
-        {"lv", "Latvian"},
-        {"mk", "Macedonian"},
-        {"ml", "Malayalam"},
-        {"mr", "Marathi"},
-        {"mo", "Moldavian"},
-        {"sr-ME", "Montenegrin"},
-        {"ne", "Nepali"},
-        {"no", "Norwegian"},
-        {"pl", "Polish"},
-        {"pt-BR", "Portuguese (Brazil)"},
-        {"pt-PT", "Portuguese (Portugal)"},
-        {"ro", "Romanian"},
-        {"ru", "Russian"},
-        {"sr", "Serbian"},
-        {"sh", "Serbo-Croatian"},
-        {"si", "Sinhalese"},
-        {"sk", "Slovak"},
-        {"sl", "Slovenian"},
-        {"es", "Spanish"},
-        {"es-419", "Spanish (Latin American)"},
-        {"su", "Sundanese"},
-        {"sw", "Swahili"},
-        {"sv", "Swedish"},
-        {"ta", "Tamil"},
-        {"te", "Telugu"},
-        {"th", "Thai"},
-        {"tr", "Turkish"},
-        {"uk", "Ukrainian"},
-        {"ur", "Urdu"},
-        {"vi", "Vietnamese"},
-        {"cy", "Welsh"},
-    };
+const std::map<string, string> lang_codes{
+    {"af", "Afrikaans"},
+    {"sq", "Albanian"},
+    {"ar", "Arabic"},
+    {"hy", "Armenian"},
+    {"az", "Azerbaijani"},
+    {"eu", "Basque"},
+    {"be", "Belarusian"},
+    {"bn", "Bengali"},
+    {"bs", "Bosnian"},
+    {"km", "Cambodian"},
+    {"ca", "Catalan"},
+    {"zh-CN", "Chinese (Simplified)"},
+    {"zh-TW", "Chinese (Traditional)"},
+    {"hr", "Croatian"},
+    {"cs", "Czech"},
+    {"da", "Danish"},
+    {"nl", "Dutch"},
+    {"en", "English"},
+    {"eo", "Esperanto"},
+    {"et", "Estonian"},
+    {"tl", "Filipino"},
+    {"fi", "Finnish"},
+    {"fr", "French"},
+    {"ka", "Georgian"},
+    {"de", "German"},
+    {"el", "Greek"},
+    {"gu", "Gujarati"},
+    {"hi", "Hindi"},
+    {"hu", "Hungarian"},
+    {"is", "Icelandic"},
+    {"id", "Indonesian"},
+    {"it", "Italian"},
+    {"ja", "Japanese"},
+    {"jw", "Javanese"},
+    {"kn", "Kannada"},
+    {"ko", "Korean"},
+    {"la", "Latin"},
+    {"lv", "Latvian"},
+    {"mk", "Macedonian"},
+    {"ml", "Malayalam"},
+    {"mr", "Marathi"},
+    {"mo", "Moldavian"},
+    {"sr-ME", "Montenegrin"},
+    {"ne", "Nepali"},
+    {"no", "Norwegian"},
+    {"pl", "Polish"},
+    {"pt-BR", "Portuguese (Brazil)"},
+    {"pt-PT", "Portuguese (Portugal)"},
+    {"ro", "Romanian"},
+    {"ru", "Russian"},
+    {"sr", "Serbian"},
+    {"sh", "Serbo-Croatian"},
+    {"si", "Sinhalese"},
+    {"sk", "Slovak"},
+    {"sl", "Slovenian"},
+    {"es", "Spanish"},
+    {"es-419", "Spanish (Latin American)"},
+    {"su", "Sundanese"},
+    {"sw", "Swahili"},
+    {"sv", "Swedish"},
+    {"ta", "Tamil"},
+    {"te", "Telugu"},
+    {"th", "Thai"},
+    {"tr", "Turkish"},
+    {"uk", "Ukrainian"},
+    {"ur", "Urdu"},
+    {"vi", "Vietnamese"},
+    {"cy", "Welsh"},
+};
 
-    class GoogleTTS {
-        private:
+class GoogleTTS {
+private:
+  string _curl = "curl 'https://translate.google.com/translate_tts?ie=UTF-8&q=";
+  string _lang = "&tl=";
+  string _text = "";
+  string _client = "&client=tw-ob' ";
+  string _out = "> /tmp/gtts.mp3";
+  string _outv = "> /tmp/gtts_";
+  string _ref = " 'Referer: http://translate.google.com/' ";
+  string _agent = " 'User-Agent: stagefright/1.2 (Linux;Android 9.0)' ";
+  string _mpv = "mpg123";
+  string _speed = " --speed=";
+  string _play = " /tmp/gtts.mp3 1>/dev/null";
+  string _cat = "cat /tmp/gtts_*.mp3 > /tmp/gtts.mp3";
+  string _rm = "rm /tmp/gtts_*.mp3";
+  string _cp = "cp /tmp/gtts.mp3 /etc/audioclips/";
 
-        string _curl =
-            "curl 'https://translate.google.com/translate_tts?ie=UTF-8&q=";
-        string _lang = "&tl=";
-        string _text = "";
-        string _client = "&client=tw-ob' ";
-        string _out = "> /tmp/gtts.mp3";
-        string _outv = "> /tmp/gtts_";
-        string _ref = " 'Referer: http://translate.google.com/' ";
-        string _agent = " 'User-Agent: stagefright/1.2 (Linux;Android 9.0)' ";
-        string _mpv = "mpg123";
-        string _speed = " --speed=";
-        string _play = " /tmp/gtts.mp3 1>/dev/null";
-        string _cat = "cat /tmp/gtts_*.mp3 > /tmp/gtts.mp3";
-        string _rm = "rm /tmp/gtts_*.mp3";
-        string _cp = "cp /tmp/gtts.mp3 /etc/audioclips/";
+  std::vector<string> _cmds;
 
+  void parse(const std::vector<string> &vec);
+  void parse();
+  std::vector<string> split(string &msg);
+  void replace(string &text);
+  void unite();
 
-        std::vector<string> _cmds;
+public:
+  GoogleTTS(string msg, const string& lang, const string& speed = "1.0");
+  void execute();
+  static void help();
+  static void version();
+  static void languages();
+};
 
-        void parse(std::vector<string>& vec);
-        void parse();
-        std::vector<string> split(string& msg);
-        void replace(string& text);
-        void unite();
+} // namespace gtts
 
-        public:
-        GoogleTTS(string msg, string lang, string speed = "1.0");
-        void execute();
-        static void help();
-        static void version();
-        static void languages();
-    };
-
-}
-
-#endif //GTTS_H
+#endif // GTTS_H

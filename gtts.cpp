@@ -55,7 +55,7 @@ const char SAFE[256] =
 	}
 
 
-GoogleTTS::GoogleTTS(string msg, string lang, string speed) {
+GoogleTTS::GoogleTTS(string msg, const string &lang, const string &speed) {
     _speed += speed;
     _lang += lang;
     if (msg.length() > 200) {
@@ -109,11 +109,11 @@ void GoogleTTS::execute() {
 
 void GoogleTTS::replace(string& text) {
     text = URIEncode(text);
-    /*size_t start_pos = 0;
+    size_t start_pos = 0;
     while ((start_pos = text.find(" ", start_pos)) != string::npos) {
        text.replace(start_pos, 1, "%20");
        start_pos += 3; // Handles case where 'to' is a substring of 'from'
-    }*/
+    }
 }
 
 void GoogleTTS::parse() {
@@ -123,7 +123,7 @@ void GoogleTTS::parse() {
     _cmds.push_back(cmd);
 }
 
-void GoogleTTS::parse(std::vector<string>& vec) {
+void GoogleTTS::parse(const std::vector<string>& vec) {
     string cmd = "";
     int i = 0;
     for (string msg : vec) {
@@ -154,7 +154,6 @@ void GoogleTTS::help() {
 
 void GoogleTTS::languages() {
     std::cout << "Supported languages:" << std::endl;
-    int counter = 0;
     for(std::pair<string, string> l : lang_codes) {
         std::cout << l.first  << "\t:\t"<< l.second << std::endl;
     }    
